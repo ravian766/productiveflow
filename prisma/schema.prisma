@@ -1,0 +1,229 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  IN_REVIEW
+  COMPLETED
+  BLOCKED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model User {
+  id              String         @id @default(cuid())
+  name            String?
+  email           String         @unique
+  password        String
+  profileImage    String?        // URL to the profile image
+  role            UserRole       @default(MEMBER)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  projects        Project[]
+  tasks           Task[]
+  organization    Organization?  @relation(fields: [orgId], references: [id])
+  orgId           String?
+  resetToken      String?
+  resetTokenExpiry DateTime?
+  comments        Comment[]
+  teamMemberships TeamMember[]
+  notifications   Notification[]
+  timeEntries     TimeEntry[]
+}
+
+model Organization {
+  id          String        @id @default(cuid())
+  name        String
+  users       User[]
+  projects    Project[]
+  teams       Team[]
+  categories  Category[]
+  tags        Tag[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Team {
+  id            String      @id @default(cuid())
+  name          String
+  description   String?
+  organization  Organization @relation(fields: [orgId], references: [id])
+  orgId         String
+  members       TeamMember[]
+  projects      Project[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model TeamMember {
+  id        String    @id @default(cuid())
+  role      UserRole  @default(MEMBER)
+  team      Team      @relation(fields: [teamId], references: [id])
+  teamId    String
+  user      User      @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([teamId, userId])
+}
+
+model Category {
+  id            String      @id @default(cuid())
+  name          String
+  description   String?
+  organization  Organization @relation(fields: [orgId], references: [id])
+  orgId         String
+  projects      Project[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([orgId, name])
+}
+
+model Tag {
+  id            String      @id @default(cuid())
+  name          String
+  color         String      @default("#000000")
+  organization  Organization @relation(fields: [orgId], references: [id])
+  orgId         String
+  projects      Project[]
+  tasks         Task[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([orgId, name])
+}
+
+model Project {
+  id          String      @id @default(cuid())
+  name        String
+  description String?
+  status      String      @default("ACTIVE")
+  startDate   DateTime?
+  endDate     DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  tasks       Task[]
+  users       User[]
+  teams       Team[]
+  category    Category?   @relation(fields: [categoryId], references: [id])
+  categoryId  String?
+  tags        Tag[]
+  org         Organization @relation(fields: [orgId], references: [id])
+  orgId       String
+  comments    Comment[]
+  analytics   Analytics[]
+  timeEntries TimeEntry[]
+}
+
+model Task {
+  id          String       @id @default(cuid())
+  title       String
+  description String?
+  status      TaskStatus   @default(TODO)
+  priority    TaskPriority @default(MEDIUM)
+  dueDate     DateTime?
+  startDate   DateTime?
+  endDate     DateTime?
+  estimatedHours Float?
+  actualHours    Float?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @default(now())
+  project     Project      @relation(fields: [projectId], references: [id])
+  projectId   String
+  assignee    User         @relation(fields: [assigneeId], references: [id])
+  assigneeId  String
+  tags        Tag[]
+  comments    Comment[]
+  subtasks    Subtask[]
+  dependencies Task[]      @relation("TaskDependencies")
+  dependentOn  Task[]      @relation("TaskDependencies")
+  timeEntries TimeEntry[]
+  @@index([status])
+  @@index([priority])
+  @@index([dueDate])
+}
+
+model Subtask {
+  id          String    @id @default(cuid())
+  title       String
+  completed   Boolean   @default(false)
+  task        Task      @relation(fields: [taskId], references: [id])
+  taskId      String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Comment {
+  id          String    @id @default(cuid())
+  content     String
+  project     Project?  @relation(fields: [projectId], references: [id])
+  projectId   String?
+  task        Task?     @relation(fields: [taskId], references: [id])
+  taskId      String?
+  author      User      @relation(fields: [authorId], references: [id])
+  authorId    String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Analytics {
+  id            String    @id @default(cuid())
+  project       Project   @relation(fields: [projectId], references: [id])
+  projectId     String
+  date          DateTime  @default(now())
+  taskCompleted Int       @default(0)
+  taskCreated   Int       @default(0)
+  timeSpent     Float     @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@unique([projectId, date])
+}
+
+model TimeEntry {
+  id          String    @id @default(cuid())
+  startTime   DateTime  @default(now())
+  endTime     DateTime?
+  duration    Int?      // Duration in seconds
+  description String?
+  task        Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+  project     Project?  @relation(fields: [projectId], references: [id])
+  projectId   String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Notification {
+  id          String    @id @default(cuid())
+  type        String
+  title       String
+  message     String
+  read        Boolean   @default(false)
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}

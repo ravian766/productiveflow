@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background Circle -->
+    <circle cx="256" cy="256" r="248" fill="#F3F4F6" stroke="#4F46E5" stroke-width="16"/>
+    
+    <!-- Flowing Lines representing productivity -->
+    <path d="M128 256C128 256 192 192 256 192C320 192 384 256 384 256" 
+          stroke="#4F46E5" stroke-width="24" stroke-linecap="round"/>
+    
+    <!-- Check mark representing task completion -->
+    <path d="M192 256L240 304L320 224" 
+          stroke="#4F46E5" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Circular progress indicator -->
+    <path d="M256 128C326.692 128 384 185.308 384 256" 
+          stroke="#818CF8" stroke-width="24" stroke-linecap="round"/>
+</svg>
