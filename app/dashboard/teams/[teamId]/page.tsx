@@ -1,5 +1,5 @@
 import { notFound, redirect } from 'next/navigation';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/db';
 import { auth } from '@/lib/auth';
 import { TeamDetails } from '@/components/TeamDetails';
 
@@ -13,7 +13,7 @@ async function getTeam(teamId: string) {
   const user = await auth();
   if (!user) return null;
 
-  const team = await prisma.team.findUnique({
+  const team = await db.team.findUnique({
     where: { id: teamId },
     include: {
       members: {

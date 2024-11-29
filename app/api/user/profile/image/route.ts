@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/db';
 import { join } from 'path';
 import { writeFile, mkdir } from 'fs/promises';
-import { Prisma } from '@prisma/client';
 
 // Configure Next.js to handle file uploads
 export async function POST(request: Request) {
@@ -54,7 +53,7 @@ export async function POST(request: Request) {
 
       // Update user profile with image URL
       const imageUrl = `/uploads/${filename}`;
-      await prisma.user.update({
+      await db.user.update({
         where: { id: user.id },
         data: { profileImage: imageUrl },
       });

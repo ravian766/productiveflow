@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/db';
 import { auth } from '@/lib/auth';
 
 export async function GET(
@@ -12,7 +12,7 @@ export async function GET(
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const task = await prisma.task.findUnique({
+    const task = await db.task.findUnique({
       where: { id: params.taskId },
       include: {
         project: {
@@ -62,7 +62,7 @@ export async function PUT(
     const data = await request.json();
     const { title, description, status, priority, dueDate, projectId, assigneeId, tagIds } = data;
 
-    const task = await prisma.task.update({
+    const task = await db.task.update({
       where: { id: params.taskId },
       data: {
         title,
@@ -123,7 +123,7 @@ export async function PATCH(
 
     const { tagIds, ...data } = await request.json();
 
-    const task = await prisma.task.update({
+    const task = await db.task.update({
       where: { id: params.taskId },
       data: {
         ...data,
@@ -172,7 +172,7 @@ export async function DELETE(
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    await prisma.task.delete({
+    await db.task.delete({
       where: { id: params.taskId },
     });
 

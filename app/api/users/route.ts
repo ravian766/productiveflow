@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/db';
 import { getSession } from '@/lib/session';
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Fetch users from the same organization as the current user
-    const users = await prisma.user.findMany({
+    const users = await db.user.findMany({
       where: {
         orgId: session.user.orgId
       },
@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
     const body = createUserSchema.parse(json);
 
     // Check if email is already in use
-    const existingUser = await prisma.user.findUnique({
+    const existingUser = await db.user.findUnique({
       where: { email: body.email },
     });
 
@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
     const hashedPassword = await bcrypt.hash(body.password, 10);
 
     // Create the user
-    const user = await prisma.user.create({
+    const user = await db.user.create({
       data: {
         email: body.email,
         name: body.name,

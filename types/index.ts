@@ -11,6 +11,12 @@ export enum TaskPriority {
   HIGH = 'HIGH'
 }
 
+export enum ProjectPriority {
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH'
+}
+
 export interface User {
   id: string;
   name: string | null;
@@ -44,6 +50,12 @@ export interface Project {
   id: string;
   name: string;
   description?: string | null;
+  startDate?: Date | null;
+  endDate?: Date | null;
+  status: any; // Changed type to any
+  priority: ProjectPriority;
+  createdAt: Date;
+  updatedAt?: Date;
   tasks: Task[];
   users: User[];
 }

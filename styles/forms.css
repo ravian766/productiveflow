@@ -1,0 +1,72 @@
+/* Base input styles */
+.form-input {
+  @apply w-full rounded-lg border-gray-300 shadow-sm transition-colors
+  focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50
+  dark:border-gray-600 dark:bg-gray-700 dark:text-white
+  disabled:cursor-not-allowed disabled:bg-gray-100 dark:disabled:bg-gray-800;
+}
+
+/* Label styles */
+.form-label {
+  @apply block text-sm font-medium mb-1
+  text-gray-700 dark:text-gray-300;
+}
+
+/* Select styles */
+.form-select {
+  @apply w-full rounded-lg border-gray-300 shadow-sm 
+  focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50
+  dark:border-gray-600 dark:bg-gray-700 dark:text-white;
+}
+
+/* Textarea styles */
+.form-textarea {
+  @apply w-full rounded-lg border-gray-300 shadow-sm resize-none
+  focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50
+  dark:border-gray-600 dark:bg-gray-700 dark:text-white;
+}
+
+/* Form group spacing */
+.form-group {
+  @apply space-y-2 mb-4;
+}
+
+/* Error message styling */
+.form-error {
+  @apply text-sm text-red-600 dark:text-red-400 mt-1;
+}
+
+/* Helper text */
+.form-helper {
+  @apply text-sm text-gray-500 dark:text-gray-400 mt-1;
+}
+
+/* Form container */
+.form-container {
+  @apply space-y-6 max-w-2xl mx-auto p-6;
+}
+
+/* Checkbox and radio styles */
+.form-checkbox, .form-radio {
+  @apply rounded border-gray-300 text-blue-600 shadow-sm
+  focus:border-blue-500 focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50
+  dark:border-gray-600 dark:bg-gray-700;
+}
+
+/* Form section divider */
+.form-divider {
+  @apply my-8 border-t border-gray-200 dark:border-gray-700;
+}
+
+/* Form buttons */
+.form-submit {
+  @apply w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white
+  bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
+  disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.form-cancel {
+  @apply w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700
+  bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500
+  dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700;
+}

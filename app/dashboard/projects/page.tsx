@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/db';
 import { auth } from '@/lib/auth';
 import { ProjectsList } from '@/components/ProjectsList';
 
@@ -9,7 +9,7 @@ async function getProjects() {
   const user = await auth();
   if (!user) return [];
 
-  return prisma.project.findMany({
+  return db.project.findMany({
     where: {
       users: {
         some: {

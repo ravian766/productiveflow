@@ -165,25 +165,13 @@ export function Navbar() {
                   </Menu.Item>
                   <Menu.Item>
                     {({ active }) => (
-                      <Link
-                        href="/dashboard/settings"
-                        className={`${
-                          active ? 'bg-gray-50' : ''
-                        } block px-4 py-2 text-sm text-gray-700`}
-                      >
-                        Settings
-                      </Link>
-                    )}
-                  </Menu.Item>
-                  <Menu.Item>
-                    {({ active }) => (
                       <button
                         onClick={handleSignOut}
                         className={`${
                           active ? 'bg-gray-50' : ''
-                        } block w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50`}
+                        } block w-full px-4 py-2 text-left text-sm text-red-700`}
                       >
-                        Sign out
+                        Sign Out
                       </button>
                     )}
                   </Menu.Item>

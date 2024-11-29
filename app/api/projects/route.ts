@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/db';
 import { getSession } from '@/lib/session';
 import { z } from 'zod';
 
 const projectSchema = z.object({
   name: z.string().min(1, 'Project name is required'),
   description: z.string().optional(),
+  startDate: z.string().min(1, 'Start date is required'),
+  endDate: z.string().min(1, 'End date is required'),
+  status: z.enum(['ACTIVE', 'ON_HOLD', 'COMPLETED']),
+  priority: z.enum(['LOW', 'MEDIUM', 'HIGH']),
 });
 
 export async function POST(req: NextRequest) {
@@ -25,10 +29,14 @@ export async function POST(req: NextRequest) {
     const json = await req.json();
     const body = projectSchema.parse(json);
 
-    const project = await prisma.project.create({
+    const project = await db.project.create({
       data: {
         name: body.name,
         description: body.description,
+        startDate: new Date(body.startDate),
+        endDate: new Date(body.endDate),
+        status: body.status,
+      //  priority: body.priority,
         users: { 
           connect: { id: session.user.id }
         },
@@ -80,7 +88,7 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    const projects = await prisma.project.findMany({
+    const projects = await db.project.findMany({
       where: {
         orgId: session.user.orgId
       },

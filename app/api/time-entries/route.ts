@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/db';
 
 export async function POST(request: Request) {
   try {
@@ -21,7 +21,7 @@ export async function POST(request: Request) {
       duration = Math.floor((new Date(endTime).getTime() - new Date(startTime).getTime()) / 1000);
     }
 
-    const timeEntry = await prisma.timeEntry.create({
+    const timeEntry = await db.timeEntry.create({
       data: {
         taskId,
         userId: user.id,
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
 
     // If we have a project ID, update the time entry with it
     if (timeEntry.task.projectId) {
-      await prisma.timeEntry.update({
+      await db.timeEntry.update({
         where: { id: timeEntry.id },
         data: { projectId: timeEntry.task.projectId },
       });
@@ -68,7 +68,7 @@ export async function PUT(request: Request) {
       return new NextResponse('Time entry ID is required', { status: 400 });
     }
 
-    const timeEntry = await prisma.timeEntry.findUnique({
+    const timeEntry = await db.timeEntry.findUnique({
       where: { id },
       select: { userId: true, startTime: true },
     });
@@ -87,7 +87,7 @@ export async function PUT(request: Request) {
       duration = Math.floor((new Date(endTime).getTime() - timeEntry.startTime.getTime()) / 1000);
     }
 
-    const updatedTimeEntry = await prisma.timeEntry.update({
+    const updatedTimeEntry = await db.timeEntry.update({
       where: { id },
       data: {
         endTime: endTime ? new Date(endTime) : null,
@@ -126,7 +126,7 @@ export async function GET(request: Request) {
       whereClause.endTime = null;
     }
 
-    const timeEntries = await prisma.timeEntry.findMany({
+    const timeEntries = await db.timeEntry.findMany({
       where: whereClause,
       orderBy: {
         startTime: 'desc',

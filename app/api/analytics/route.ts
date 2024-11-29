@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { prisma} from '@/lib/prisma';
+import { db } from '@/lib/db';
 
 export async function GET() {
   try {
@@ -10,7 +10,7 @@ export async function GET() {
     }
 
     // Get user's organization ID
-    const userOrg = await prisma.user.findUnique({
+    const userOrg = await db.user.findUnique({
       where: { email: user.email },
       select: { organization: true },
     });
@@ -20,7 +20,7 @@ export async function GET() {
     }
 
     // Fetch all projects with their tasks
-    const projects = await prisma.project.findMany({
+    const projects = await db.project.findMany({
       where: {
         orgId: userOrg.organization.id,
       },
@@ -45,7 +45,7 @@ export async function GET() {
     });
 
     // Fetch all tasks
-    const tasks = await prisma.task.findMany({
+    const tasks = await db.task.findMany({
       where: {
         project: {
           orgId: userOrg.organization.id,

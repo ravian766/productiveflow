@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/db';
 import { auth } from '@/lib/auth';
 
 const assignProjectSchema = z.object({
@@ -21,7 +21,7 @@ export async function POST(
     const body = assignProjectSchema.parse(json);
 
     // Check if current user is team admin
-    const currentMember = await prisma.teamMember.findFirst({
+    const currentMember = await db.teamMember.findFirst({
       where: {
         teamId: params.teamId,
         userId: user.id,
@@ -42,7 +42,7 @@ export async function POST(
     }
 
     // Check if project exists and belongs to user's organization
-    const project = await prisma.project.findFirst({
+    const project = await db.project.findFirst({
       where: {
         id: body.projectId,
         orgId: currentMember.team.organization.id,
@@ -54,7 +54,7 @@ export async function POST(
     }
 
     // Assign project to team
-    const updatedTeam = await prisma.team.update({
+    const updatedTeam = await db.team.update({
       where: {
         id: params.teamId,
       },
@@ -91,7 +91,7 @@ export async function DELETE(
     }
 
     // Check if current user is team admin
-    const currentMember = await prisma.teamMember.findFirst({
+    const currentMember = await db.teamMember.findFirst({
       where: {
         teamId: params.teamId,
         userId: user.id,
@@ -112,7 +112,7 @@ export async function DELETE(
     }
 
     // Remove project from team
-    await prisma.team.update({
+    await db.team.update({
       where: {
         id: params.teamId,
       },

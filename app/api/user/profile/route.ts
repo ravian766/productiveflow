@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/db';
 import { hash, compare } from 'bcryptjs';
 
 export async function GET() {
@@ -10,7 +10,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const profile = await prisma.user.findUnique({
+    const profile = await db.user.findUnique({
       where: { id: user.id },
       select: {
         id: true,
@@ -46,7 +46,7 @@ export async function PUT(req: NextRequest) {
     const { name, email, currentPassword, newPassword } = data;
 
     // Get the current user
-    const user = await prisma.user.findUnique({
+    const user = await db.user.findUnique({
       where: { id: session.id },
     });
 
@@ -84,7 +84,7 @@ export async function PUT(req: NextRequest) {
     }
 
     // Update the user
-    await prisma.user.update({
+    await db.user.update({
       where: { id: user.id },
       data: updateData,
     });

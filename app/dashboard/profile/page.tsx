@@ -10,19 +10,25 @@ const profileSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   email: z.string().email('Invalid email address'),
   currentPassword: z.string().optional(),
-  newPassword: z.string().min(6, 'Password must be at least 6 characters').optional(),
+  newPassword: z.string()
+    .optional()
+    .refine((val) => !val || val.length >= 6, {
+      message: "Password must be at least 6 characters"
+    }),
   confirmNewPassword: z.string().optional(),
 }).refine((data) => {
-  if (data.newPassword && !data.currentPassword) {
-    return false;
+  // Only validate passwords if newPassword is provided
+  if (data.newPassword && data.newPassword.length > 0) {
+    return data.currentPassword !== undefined && data.currentPassword.length > 0;
   }
   return true;
 }, {
   message: "Current password is required when setting a new password",
   path: ["currentPassword"],
 }).refine((data) => {
-  if (data.newPassword !== data.confirmNewPassword) {
-    return false;
+  // Only check password match if newPassword is provided
+  if (data.newPassword && data.newPassword.length > 0) {
+    return data.newPassword === data.confirmNewPassword;
   }
   return true;
 }, {
@@ -162,10 +168,10 @@ export default function ProfilePage() {
                       <img
                         src={profileImage}
                         alt="Profile"
-                        className="h-24 w-24 rounded-full object-cover"
+                        className="h-24 w-24 rounded-full object-cover ring-2 ring-primary-500 ring-offset-2"
                       />
                     ) : (
-                      <div className="h-24 w-24 rounded-full bg-gray-200 flex items-center justify-center">
+                      <div className="h-24 w-24 rounded-full bg-gray-100 flex items-center justify-center ring-2 ring-primary-500 ring-offset-2">
                         <svg
                           className="h-12 w-12 text-gray-400"
                           fill="none"
@@ -183,7 +189,7 @@ export default function ProfilePage() {
                     )}
                     <label
                       htmlFor="profile-image"
-                      className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-white shadow-lg flex items-center justify-center cursor-pointer hover:bg-gray-50 border border-gray-300"
+                      className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-white shadow-lg flex items-center justify-center cursor-pointer hover:bg-gray-50 border border-gray-300 transition-colors"
                     >
                       <svg
                         className="h-4 w-4 text-gray-500"
@@ -219,106 +225,112 @@ export default function ProfilePage() {
 
             {/* Profile Section */}
             <div className="px-6 py-6 space-y-6">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                  Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  {...register('name')}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                />
-                {errors.name && (
-                  <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
-                )}
-              </div>
+              <div className="grid gap-6 md:grid-cols-2">
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    {...register('name')}
+                    className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200 ease-in-out"
+                  />
+                  {errors.name && (
+                    <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
+                  )}
+                </div>
 
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  {...register('email')}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                />
-                {errors.email && (
-                  <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-                )}
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    {...register('email')}
+                    className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200 ease-in-out"
+                  />
+                  {errors.email && (
+                    <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+                  )}
+                </div>
               </div>
             </div>
 
             {/* Password Section */}
             <div className="px-6 py-6 space-y-6">
-              <div>
+              <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
                 <h4 className="text-sm font-medium text-gray-900">Change Password</h4>
                 <p className="mt-1 text-sm text-gray-500">
-                  Leave blank if you don't want to change your password
+                  Optional: Fill out these fields only if you want to change your password. Leave all password fields empty to keep your current password.
                 </p>
               </div>
 
-              <div>
-                <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700">
-                  Current Password
-                </label>
-                <input
-                  type="password"
-                  id="currentPassword"
-                  {...register('currentPassword')}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                />
-                {errors.currentPassword && (
-                  <p className="mt-1 text-sm text-red-600">{errors.currentPassword.message}</p>
-                )}
-              </div>
+              <div className="grid gap-6">
+                <div>
+                  <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700">
+                    Current Password
+                  </label>
+                  <input
+                    type="password"
+                    id="currentPassword"
+                    {...register('currentPassword')}
+                    className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200 ease-in-out"
+                  />
+                  {errors.currentPassword && (
+                    <p className="mt-1 text-sm text-red-600">{errors.currentPassword.message}</p>
+                  )}
+                </div>
 
-              <div>
-                <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
-                  New Password
-                </label>
-                <input
-                  type="password"
-                  id="newPassword"
-                  {...register('newPassword')}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                />
-                {errors.newPassword && (
-                  <p className="mt-1 text-sm text-red-600">{errors.newPassword.message}</p>
-                )}
-              </div>
+                <div>
+                  <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
+                    New Password
+                  </label>
+                  <input
+                    type="password"
+                    id="newPassword"
+                    {...register('newPassword')}
+                    className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200 ease-in-out"
+                    placeholder="Leave blank to keep current password"
+                  />
+                  {errors.newPassword && (
+                    <p className="mt-1 text-sm text-red-600">{errors.newPassword.message}</p>
+                  )}
+                </div>
 
-              <div>
-                <label htmlFor="confirmNewPassword" className="block text-sm font-medium text-gray-700">
-                  Confirm New Password
-                </label>
-                <input
-                  type="password"
-                  id="confirmNewPassword"
-                  {...register('confirmNewPassword')}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm"
-                />
-                {errors.confirmNewPassword && (
-                  <p className="mt-1 text-sm text-red-600">{errors.confirmNewPassword.message}</p>
-                )}
+                <div>
+                  <label htmlFor="confirmNewPassword" className="block text-sm font-medium text-gray-700">
+                    Confirm New Password
+                  </label>
+                  <input
+                    type="password"
+                    id="confirmNewPassword"
+                    {...register('confirmNewPassword')}
+                    className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200 ease-in-out"
+                    placeholder="Leave blank to keep current password"
+                  />
+                  {errors.confirmNewPassword && (
+                    <p className="mt-1 text-sm text-red-600">{errors.confirmNewPassword.message}</p>
+                  )}
+                </div>
               </div>
             </div>
 
             {/* Footer */}
-            <div className="px-6 py-4 bg-gray-50 rounded-b-lg flex items-center justify-between">
+            <div className="px-6 py-4 bg-gray-50 rounded-b-lg flex items-center justify-between space-x-4">
               <div className="flex-1">
                 {error && (
-                  <p className="text-sm text-red-600">{error}</p>
+                  <p className="text-sm text-red-600 bg-red-50 px-3 py-2 rounded-md">{error}</p>
                 )}
                 {success && (
-                  <p className="text-sm text-green-600">{success}</p>
+                  <p className="text-sm text-green-600 bg-green-50 px-3 py-2 rounded-md">{success}</p>
                 )}
               </div>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="inline-flex justify-center rounded-md border border-transparent bg-primary-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="inline-flex justify-center rounded-lg border border-transparent bg-primary-600 py-2.5 px-6 text-sm font-medium text-white shadow-sm hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {isSubmitting ? 'Saving...' : 'Save Changes'}
               </button>

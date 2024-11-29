@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/db';
 import { getSession } from '@/lib/session';
 
 export async function DELETE(
@@ -13,7 +13,7 @@ export async function DELETE(
     }
 
     // First, verify the tag belongs to the user's organization
-    const tag = await prisma.tag.findUnique({
+    const tag = await db.tag.findUnique({
       where: { id: params.tagId },
       select: { orgId: true }
     });
@@ -27,7 +27,7 @@ export async function DELETE(
     }
 
     // Delete the tag
-    await prisma.tag.delete({
+    await db.tag.delete({
       where: { id: params.tagId }
     });
 

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/db';
 import { getSession } from '@/lib/session';
 import { z } from 'zod';
 
@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Fetch tags for the user's organization
-    const tags = await prisma.tag.findMany({
+    const tags = await db.tag.findMany({
       where: {
         orgId: session.user.orgId
       },
@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
     const data = await req.json();
     const validatedData = tagSchema.parse(data);
 
-    const tag = await prisma.tag.create({
+    const tag = await db.tag.create({
       data: {
         name: validatedData.name,
         color: validatedData.color,

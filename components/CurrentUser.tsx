@@ -1,12 +1,12 @@
 import { auth } from '@/lib/auth';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/db';
 
 export async function getCurrentUser() {
   try {
     const user = await auth();
     if (!user?.id) return null;
 
-    const fullUser = await prisma.user.findUnique({
+    const fullUser = await db.user.findUnique({
       where: { id: user.id },
       select: {
         id: true,

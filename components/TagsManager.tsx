@@ -93,7 +93,7 @@ export function TagsManager() {
               id="tagName"
               value={newTagName}
               onChange={(e) => setNewTagName(e.target.value)}
-              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              className="mt-1 block w-full px-4 py-3 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors duration-200 ease-in-out"
               placeholder="Enter tag name"
               required
             />
@@ -107,7 +107,7 @@ export function TagsManager() {
               id="tagColor"
               value={newTagColor}
               onChange={(e) => setNewTagColor(e.target.value)}
-              className="h-9 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 cursor-pointer"
+              className="h-12 w-full rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 cursor-pointer transition-colors duration-200 ease-in-out"
             />
           </div>
           <button

@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { db } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import { randomBytes } from 'crypto';
-
-const prisma = new PrismaClient();
 
 export async function POST(request: Request) {
   try {
@@ -13,7 +11,7 @@ export async function POST(request: Request) {
     const resetToken = randomBytes(32).toString('hex');
     const resetTokenExpiry = new Date(Date.now() + 3600000); // 1 hour
 
-    await prisma.user.update({
+    await db.user.update({
       where: { email },
       data: {
         resetToken,

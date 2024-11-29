@@ -1,7 +1,7 @@
 import { getSession } from './session';
 import { redirect } from 'next/navigation';
 import { User } from '@prisma/client';
-import { prisma } from './prisma';
+import { db } from './db';
 import bcrypt from 'bcryptjs';
 
 export type Session = {

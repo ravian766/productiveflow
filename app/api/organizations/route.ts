@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/db';
 import { getSession } from '@/lib/session';
 import { z } from 'zod';
 
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
     const body = organizationSchema.parse(json);
 
     // Create organization and update user in a transaction
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await db.$transaction(async (tx) => {
       const org = await tx.organization.create({
         data: {
           name: body.name,
@@ -57,7 +57,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const org = await prisma.organization.findFirst({
+    const org = await db.organization.findFirst({
       where: {
         users: {
           some: {

@@ -1,5 +1,5 @@
 import { auth } from '@/lib/auth';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/db';
 import { UserList } from '@/components/UserList';
 import { PageHeader } from '@/components/PageHeader';
 
@@ -7,7 +7,7 @@ export default async function UsersPage() {
   const user = await auth();
   if (!user?.orgId) return null;
 
-  const users = await prisma.user.findMany({
+  const users = await db.user.findMany({
     where: {
       orgId: user.orgId,
     },

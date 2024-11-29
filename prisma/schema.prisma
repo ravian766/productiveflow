@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
@@ -28,6 +29,26 @@ enum TaskPriority {
   URGENT
 }
 
+enum ThemeType {
+  system
+  light
+  dark
+}
+
+enum AccentColorType {
+  blue
+  green
+  purple
+  red
+  orange
+}
+
+enum ProjectStatus {
+  ACTIVE
+  ON_HOLD
+  COMPLETED
+}
+
 model User {
   id              String         @id @default(cuid())
   name            String?
@@ -35,6 +56,8 @@ model User {
   password        String
   profileImage    String?        // URL to the profile image
   role            UserRole       @default(MEMBER)
+  theme           ThemeType      @default(system)
+  accentColor     AccentColorType @default(blue)
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
   projects        Project[]
@@ -117,7 +140,7 @@ model Project {
   id          String      @id @default(cuid())
   name        String
   description String?
-  status      String      @default("ACTIVE")
+  status      ProjectStatus @default(ACTIVE)
   startDate   DateTime?
   endDate     DateTime?
   createdAt   DateTime    @default(now())

@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/db';
 import { auth } from '@/lib/auth';
 import { TeamsList } from '@/components/TeamsList';
 
@@ -9,7 +9,7 @@ async function getTeams() {
   const user = await auth();
   if (!user) return [];
 
-  const teams = await prisma.team.findMany({
+  const teams = await db.team.findMany({
     where: {
       organization: {
         users: {

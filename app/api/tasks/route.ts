@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/db';
 import { auth } from '@/lib/auth';
 
 export async function GET(request: Request) {
@@ -28,7 +28,7 @@ export async function GET(request: Request) {
       ...(projectId ? { projectId } : {}),
     };
 
-    const tasks = await prisma.task.findMany({
+    const tasks = await db.task.findMany({
       where: whereClause,
       include: {
         project: {
@@ -74,7 +74,7 @@ export async function POST(request: Request) {
     const data = await request.json();
     const { title, description, status, priority, dueDate, projectId, assigneeId, tagIds } = data;
 
-    const task = await prisma.task.create({
+    const task = await db.task.create({
       data: {
         title,
         description,

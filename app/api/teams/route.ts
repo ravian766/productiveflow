@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { prisma } from '@/lib/prisma';
+import { db } from '@/lib/db';
 import { auth } from '@/lib/auth';
 
 const createTeamSchema = z.object({
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     const body = createTeamSchema.parse(json);
 
     // Get user's organization
-    const userOrg = await prisma.user.findUnique({
+    const userOrg = await db.user.findUnique({
       where: { id: user.id },
       select: { organization: true },
     });
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
       return new NextResponse('User not associated with an organization', { status: 400 });
     }
 
-    const team = await prisma.team.create({
+    const team = await db.team.create({
       data: {
         name: body.name,
         description: body.description,
@@ -72,7 +72,7 @@ export async function GET(req: NextRequest) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const teams = await prisma.team.findMany({
+    const teams = await db.team.findMany({
       where: {
         organization: {
           users: {
