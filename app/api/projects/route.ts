@@ -73,26 +73,24 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    if (!session.user.orgId) {
+      return NextResponse.json(
+        { error: 'Organization not found' },
+        { status: 400 }
+      );
+    }
+
     const projects = await prisma.project.findMany({
       where: {
-        users: {
-          some: {
-            id: session.user.id
-          }
-        }
+        orgId: session.user.orgId
       },
-      include: {
-        tasks: {
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        teams: {
           select: {
-            id: true,
-            status: true
-          }
-        },
-        users: {
-          select: {
-            id: true,
-            name: true,
-            email: true
+            id: true
           }
         }
       }

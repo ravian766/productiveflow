@@ -10,6 +10,7 @@ export type Session = {
     email: string;
     name: string | null;
     orgId: string;
+    role: 'ADMIN' | 'MEMBER' | 'VIEWER';
   }
 };
 
@@ -29,4 +30,3 @@ export async function requireAuth(): Promise<AuthUser> {
   }
   return user;
 }
-;

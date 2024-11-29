@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 import { TeamDetails } from '@/components/TeamDetails';
@@ -63,15 +63,19 @@ async function getTeam(teamId: string) {
 }
 
 export default async function TeamPage({ params }: TeamPageProps) {
-  const team = await getTeam(params.teamId);
+  const user = await auth();
+  if (!user) {
+    redirect('/auth/signin');
+  }
 
+  const team = await getTeam(params.teamId);
   if (!team) {
     notFound();
   }
 
   return (
     <div className="p-6">
-      <TeamDetails team={team} />
+      <TeamDetails team={team} currentUserId={user.id} />
     </div>
   );
 }

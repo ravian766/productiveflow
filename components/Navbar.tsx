@@ -8,12 +8,12 @@ import {
   Bars3Icon,
   HomeIcon,
   FolderIcon,
-  CalendarIcon,
   ChartBarIcon,
   Cog6ToothIcon,
   UserGroupIcon,
   ClipboardDocumentListIcon,
   TagIcon,
+  UsersIcon,
 } from '@heroicons/react/24/outline'
 import { Logo } from './Logo'
 
@@ -28,8 +28,8 @@ const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
   { name: 'Projects', href: '/dashboard/projects', icon: FolderIcon },
   { name: 'Teams', href: '/dashboard/teams', icon: UserGroupIcon },
+  { name: 'Users', href: '/dashboard/users', icon: UsersIcon },
   { name: 'Tasks', href: '/dashboard/tasks', icon: ClipboardDocumentListIcon },
-  { name: 'Calendar', href: '/dashboard/calendar', icon: CalendarIcon },
   { name: 'Analytics', href: '/dashboard/analytics', icon: ChartBarIcon },
   { name: 'Tags', href: '/dashboard/settings/tags', icon: TagIcon },
 ]
