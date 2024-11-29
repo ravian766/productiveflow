@@ -13,6 +13,7 @@ import {
   Cog6ToothIcon,
   UserGroupIcon,
   ClipboardDocumentListIcon,
+  TagIcon,
 } from '@heroicons/react/24/outline'
 import { Logo } from './Logo'
 
@@ -30,6 +31,7 @@ const navigation = [
   { name: 'Tasks', href: '/dashboard/tasks', icon: ClipboardDocumentListIcon },
   { name: 'Calendar', href: '/dashboard/calendar', icon: CalendarIcon },
   { name: 'Analytics', href: '/dashboard/analytics', icon: ChartBarIcon },
+  { name: 'Tags', href: '/dashboard/settings/tags', icon: TagIcon },
 ]
 
 export function Navbar() {

@@ -8,7 +8,8 @@ import {
   InboxIcon, 
   ChartBarIcon,
   UsersIcon,
-  Cog6ToothIcon
+  Cog6ToothIcon,
+  TagIcon
 } from '@heroicons/react/24/outline';
 import { cn } from '@/lib/utils';
 
@@ -19,6 +20,7 @@ const navigation = [
   { name: 'Analytics', href: '/dashboard/analytics', icon: ChartBarIcon },
   { name: 'Team', href: '/dashboard/team', icon: UsersIcon },
   { name: 'Settings', href: '/dashboard/settings', icon: Cog6ToothIcon },
+  { name: 'Tags', href: '/dashboard/settings/tags', icon: TagIcon },
 ];
 
 export function Sidebar() {
